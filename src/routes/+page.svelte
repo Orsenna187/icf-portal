@@ -144,7 +144,7 @@
 				></div>
 			</div>
 			{#key formState.step}
-				<div class="questions-container"
+				<div class="questions-container absolute w-full"
 					in:fly={{ x: 100, duration: 400, delay: 300, opacity: 0 }} 
 					out:fade={{ duration: 200 }}>
 					{#if questions[formState.step].questions}
