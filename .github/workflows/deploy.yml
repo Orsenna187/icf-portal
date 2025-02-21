@@ -19,31 +19,27 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
           
-      - run: npm ci
-      - run: npm run build
-      
-      # Debug steps
-      - name: List directory contents
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+        
+      # Build
+      - name: Build
+        run: npm run build
+          
+      # Verify build output
+      - name: Check build output
         run: |
-          echo "Current directory:"
-          ls -la
-          echo "Build directory:"
-          ls -la build || echo "Build directory not found"
+          echo "Contents of build directory:"
+          ls -la build
           
-      # Create artifact directory
-      - name: Create artifact directory
-        run: |
-          mkdir -p ./.github-pages
-          cp -r build/* ./.github-pages || cp -r build ./.github-pages
-          
-      # Upload artifact
+      # Upload the build directory
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./.github-pages
-
+          path: build
+          
   deploy:
     needs: build
     runs-on: ubuntu-latest
