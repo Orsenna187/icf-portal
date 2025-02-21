@@ -21,6 +21,11 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
+      
+      # Debug steps to check build output
+      - name: List build directory
+        run: ls -la build
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
