@@ -16,7 +16,7 @@ const config = {
 			strict: true
 		}),
 		paths: {
-			base: dev ? '' : '/your-repo-name'  // Replace with your repository name
+			base: dev ? '' : '/icf-portal'  // Replace with your repository name
 		}
 	}
 };
