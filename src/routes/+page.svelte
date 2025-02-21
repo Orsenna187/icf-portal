@@ -357,8 +357,4 @@
 		line-height: 1.4;
 	}
 
-	/* Remove the old checkbox styles */
-	.question-checkbox {
-		display: none;
-	}
 </style>
