@@ -143,49 +143,51 @@
 					style="width: {(formState.step / (Object.keys(questions).length - 1)) * 100}%"
 				></div>
 			</div>
-			{#key formState.step}
-				<div class="questions-container absolute w-full"
-					in:fly={{ x: 100, duration: 400, delay: 300, opacity: 0 }} 
-					out:fade={{ duration: 200 }}>
-					{#if questions[formState.step].questions}
-						{#each questions[formState.step].questions as question}
-							<label class="toggle-button">
-								<input 
-									type="checkbox" 
-									bind:checked={formState.answers[question.id]}
-								>
-								<span class="toggle-slider"></span>
-								<span class="question-label">{question.question}</span>
-							</label>
-						{/each}
-					{/if}
-				</div>
-				<div class="button-container">
-					<button 
-						class="btn-nav" 
-						onclick={() => {
-							if (formState.step > 0) formState.step--;
-						}}
-						disabled={formState.step === 0}
-					>
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M15 18l-6-6 6-6"/>
-						</svg>
-						Previous
-					</button>
-					<button 
-						class="btn-nav" 
-						onclick={() => {
-							if (formState.step < Object.keys(questions).length - 1) formState.step++;
-						}}
-					>
-						Next
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M9 18l6-6-6-6"/>
-						</svg>
-					</button>
-				</div>
-			{/key}
+			<div class="relative flex-1 overflow-hidden">
+				{#key formState.step}
+					<div class="questions-container w-full"
+						in:fly={{ x: 100, duration: 400, delay: 300, opacity: 0 }} 
+						out:fade={{ duration: 200 }}>
+						{#if questions[formState.step].questions}
+							{#each questions[formState.step].questions as question}
+								<label class="toggle-button">
+									<input 
+										type="checkbox" 
+										bind:checked={formState.answers[question.id]}
+									>
+									<span class="toggle-slider"></span>
+									<span class="question-label">{question.question}</span>
+								</label>
+							{/each}
+						{/if}
+					</div>
+				{/key}
+			</div>
+			<div class="button-container">
+				<button 
+					class="btn-nav" 
+					onclick={() => {
+						if (formState.step > 0) formState.step--;
+					}}
+					disabled={formState.step === 0}
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M15 18l-6-6 6-6"/>
+					</svg>
+					Previous
+				</button>
+				<button 
+					class="btn-nav" 
+					onclick={() => {
+						if (formState.step < Object.keys(questions).length - 1) formState.step++;
+					}}
+				>
+					Next
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M9 18l6-6-6-6"/>
+					</svg>
+				</button>
+			</div>
 		</CardCustom>
 	</div>
 	 <!-- <div>{JSON.stringify(formState)}</div> -->
@@ -212,9 +214,8 @@
 	:global(.custom-card) {
 		display: flex;
 		flex-direction: column;
-		min-height: 500px;
+		height: 100%;
 		position: relative;
-		padding-bottom: 64px;
 	}
 
 	.progress-container {
@@ -291,13 +292,16 @@
 	}
 
 	.questions-container {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
 		padding: 0 1rem;
-		flex: 1;
 		overflow-y: auto;
-		margin-bottom: 0;
+		max-height: 100%;
 	}
 
 	.toggle-button {
