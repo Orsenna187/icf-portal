@@ -36,6 +36,8 @@
 		"@svelteuidev/composables": "^0.15.7",
 		"@svelteuidev/core": "^0.15.7",
 		"@svelteuidev/motion": "^0.15.7",
-		"@svelteuidev/prism": "^0.15.7"
+		"@svelteuidev/prism": "^0.15.7",
+		"flowbite-svelte-icons": "^2.0.2",
+		"pdfjs-dist": "^4.10.38"
 	}
 }

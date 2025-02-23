@@ -1,5 +1,4 @@
 <script>
-	import { Card } from 'flowbite-svelte';
 </script>
 
 <div class="min-h-screen flex items-center justify-center p-4">

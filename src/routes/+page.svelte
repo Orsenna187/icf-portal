@@ -3,6 +3,9 @@
 	import { Card } from 'flowbite-svelte';
 	import CardCustom from './CardCustom.svelte';
 	import Questionnaire from './Questionnaire.svelte';
+	import IcfReader from './IcfReader.svelte';
+	import EmailConfirmation from './EmailConfirmation.svelte';
+	import Summary from './Summary.svelte';
 
 	const questions = {
 		0: {
@@ -25,7 +28,8 @@
 			}]
 		},
 		1: {
-			title: 'Present the ICFs (placeholder)'
+			title: 'Please present the ICFs',
+			component: IcfReader
 		},
 		2: {
 			title: 'Questions for the patient (1/2)',
@@ -116,10 +120,12 @@
 			]
 		},
 		7: {
-			title: "ICFs have been signed...  (placeholder)"
+			title: "ICFs have been signed...  (placeholder)",
+			component: EmailConfirmation
 		},
 		8: {
-			title: "Summary has been sent... (placeholder)"
+			title: "Summary has been sent... (placeholder)",
+			component: Summary
 		}
 	};
 	
@@ -128,6 +134,8 @@
 		step: 0,
 		error: '',
 	});
+
+	let Comp = $derived(questions[formState.step].component);
 
 	$inspect(formState);
 </script>
@@ -147,12 +155,16 @@
 				></div>
 			</div>
 
-			<!-- Questionnaire component -->
-			<Questionnaire
-				questions={questions}
-				step={formState.step}
-				bind:answers={formState.answers}
-			/>
+			<!-- Questionnaire or custom component -->
+			{#if questions[formState.step].questions}
+				<Questionnaire
+					questions={questions}
+					step={formState.step}
+					bind:answers={formState.answers}
+				/>
+			{:else if questions[formState.step].component}
+				<Comp/>
+			{/if}
 
 			<!-- Buttons -->
 			<div class="button-container">
