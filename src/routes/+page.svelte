@@ -2,6 +2,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import { Card } from 'flowbite-svelte';
 	import CardCustom from './CardCustom.svelte';
+	import Questionnaire from './Questionnaire.svelte';
 
 	const questions = {
 		0: {
@@ -137,32 +138,23 @@
 			<h1 class="step-title">
 				{questions[formState.step].title}
 			</h1>
+
+			<!-- Progress bar -->
 			<div class="progress-container">
 				<div 
 					class="progress-bar" 
 					style="width: {(formState.step / (Object.keys(questions).length - 1)) * 100}%"
 				></div>
 			</div>
-			<div class="relative flex-1 overflow-hidden">
-				{#key formState.step}
-					<div class="questions-container w-full"
-						in:fly={{ x: 100, duration: 400, delay: 300, opacity: 0 }} 
-						out:fade={{ duration: 200 }}>
-						{#if questions[formState.step].questions}
-							{#each questions[formState.step].questions as question}
-								<label class="toggle-button">
-									<input 
-										type="checkbox" 
-										bind:checked={formState.answers[question.id]}
-									>
-									<span class="toggle-slider"></span>
-									<span class="question-label">{question.question}</span>
-								</label>
-							{/each}
-						{/if}
-					</div>
-				{/key}
-			</div>
+
+			<!-- Questionnaire component -->
+			<Questionnaire
+				questions={questions}
+				step={formState.step}
+				bind:answers={formState.answers}
+			/>
+
+			<!-- Buttons -->
 			<div class="button-container">
 				<button 
 					class="btn-nav" 
@@ -290,75 +282,4 @@
 		font-weight: 700;
 		margin-bottom: 1rem;
 	}
-
-	.questions-container {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		padding: 0 1rem;
-		overflow-y: auto;
-		max-height: 100%;
-	}
-
-	.toggle-button {
-		display: flex;
-		align-items: center;
-		gap: 0.875rem;
-		padding: 0.5rem 0.75rem;
-		background-color: #f8f9fa;
-		border-radius: 0.5rem;
-		cursor: pointer;
-		transition: background-color 0.2s ease;
-	}
-
-	.toggle-button:hover {
-		background-color: #e9ecef;
-	}
-
-	.toggle-button input[type="checkbox"] {
-		display: none;
-	}
-
-	.toggle-slider {
-		position: relative;
-		width: 2.75rem;
-		height: 1.5rem;
-		background-color: #e0e0e0;
-		border-radius: 1rem;
-		transition: background-color 0.2s ease;
-		flex-shrink: 0;
-	}
-
-	.toggle-slider::before {
-		content: '';
-		position: absolute;
-		left: 0.25rem;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 1rem;
-		height: 1rem;
-		background-color: white;
-		border-radius: 50%;
-		transition: transform 0.2s ease;
-	}
-
-	.toggle-button input[type="checkbox"]:checked + .toggle-slider {
-		background-color: #007bff;
-	}
-
-	.toggle-button input[type="checkbox"]:checked + .toggle-slider::before {
-		transform: translate(1.25rem, -50%);
-	}
-
-	.question-label {
-		font-size: clamp(1rem, 2.5vw, 1.25rem);
-		color: #2c3e50;
-		flex: 1;
-		line-height: 1.4;
-	}
-
 </style>
