@@ -100,7 +100,7 @@
 					{href} 
 					class="flex items-center space-x-4 p-3 rounded-xl hover:bg-blue-50 transition-all duration-200 text-gray-600 hover:text-blue-600 {href === activeUrl ? 'bg-blue-50 text-blue-600' : ''}"
 				>
-					<Icon/>
+					<Icon class="w-6 h-6"/>
 					<span class="font-medium">{text}</span>
 				</a>
 			{/each}
@@ -127,7 +127,4 @@
 		scrollbar-width: none;  /* Firefox */
 	}
 
-	:global(.flowbite-svelte-icons) {
-		@apply flex-shrink-0;
-	}
 </style>
