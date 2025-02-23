@@ -17,9 +17,12 @@
     let showViewer = false;
 
     onMount(async () => {
-        // const response = await fetch('/');
-        const response = {name: 'demo_icf.pdf', url: '/icf-portal/demo_icf.pdf'}
-        // pdfFiles = await response.json();
+        const dev = process.env.NODE_ENV === 'development';
+        const basePath = dev ? '' : '/icf-portal';
+        const response = {
+            name: 'demo_icf.pdf', 
+            url: `${basePath}/demo_icf.pdf`
+        };
         pdfFiles = [response];
     });
 
