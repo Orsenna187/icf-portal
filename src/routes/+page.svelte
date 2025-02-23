@@ -247,7 +247,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		background-color: white;
+		/* background-color: white; */
 		border-bottom-left-radius: inherit;
 		border-bottom-right-radius: inherit;
 	}
