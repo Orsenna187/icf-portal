@@ -17,8 +17,10 @@
     let showViewer = false;
 
     onMount(async () => {
-        const response = await fetch('/');
-        pdfFiles = await response.json();
+        // const response = await fetch('/');
+        const response = {name: 'demo_icf.pdf', url: '/demo_icf.pdf'}
+        // pdfFiles = await response.json();
+        pdfFiles = [response];
     });
 
     async function loadPDF(node, url) {
