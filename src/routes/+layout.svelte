@@ -7,6 +7,10 @@
 	let activeUrl = $derived($page.url.pathname);
 	import { NewspaperOutline, BuildingOutline, UserOutline, FolderOutline, ShareNodesOutline, CalendarWeekOutline } from 'flowbite-svelte-icons'
 
+	// Add base path handling for GitHub Pages
+	const dev = process.env.NODE_ENV === 'development';
+	const basePath = dev ? '' : '/icf-portal';
+
 	const topNavItems = [
 		{ href: '/', text: 'Button1' },
 		{ href: '/about', text: 'Button2' },
@@ -54,7 +58,7 @@
 		<div class="flex items-center justify-between px-4">
 			<!-- Logo and Brand -->
 			<a href="/" class="flex items-center py-4">
-				<img src="/medcm.png" class="h-8 sm:h-8" alt="Logo" />
+				<img src="{basePath}/medcm.png" class="h-8 sm:h-8" alt="Logo" />
 				<span class="text-2xl font-bold text-gray-700 ml-2">MedCM</span>
 			</a>
 
