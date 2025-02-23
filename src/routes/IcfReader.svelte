@@ -124,8 +124,8 @@
         padding: 2rem;
         margin: 0 2rem;
         border-radius: 8px;
-        max-height: 90vh;
-        max-width: 90vw;
+        max-height: calc(100vh - 12rem); /* Account for navbar and padding */
+        max-width: min(800px, 90vw); /* Match card max-width */
         overflow: auto;
     }
 

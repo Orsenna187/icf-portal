@@ -32,44 +32,6 @@
 			component: IcfReader
 		},
 		2: {
-			title: 'Questions for the patient (1/2)',
-			questions: [
-				{
-					question: "Have you been informed about the study?",
-					id: "patient_informed_about_study",
-				},
-				{
-					question: "Have you understood the documentation you are about to sign?",
-					id: "patient_understood_documentation",
-				},
-				{
-					question: "Have you asked all the questions you had about the study?",
-					id: "patient_asked_all_questions",
-				},
-				{
-					question: "Has the investigator answered all your questions?",
-					id: "patient_answered_all_questions",
-				},
-			]
-		},
-		3: {
-			title: 'Questions for the patient (2/2)',
-			questions: [
-				{
-					question: "Do you confirm that you are voluntarily participating in this study?",
-					id: "patient_voluntary_participation",
-				},
-				{
-					question: "Have you been given enough time to consider your participation?",
-					id: "patient_had_time_to_consider",
-				},
-				{
-					question: "Do you understand that you can stop participation at any time?",
-					id: "patient_can_stop_participation",
-				},
-			]
-		},
-		4: {
 			title: "Who is the medical representative",
 			questions: [
 				{
@@ -81,7 +43,7 @@
 					id: "is_sub_investigator",
 				}]
 		},
-		5: {
+		3: {
 			title: "Questions for the investigator (1/2)",
 			questions: [
 				{
@@ -102,7 +64,7 @@
 				}
 			]
 		},
-		6: {
+		4: {
 			title: "Questions for the investigator (2/2)",
 			questions: [
 				{
@@ -117,6 +79,44 @@
 					question: "Has the signature process happened before any medical procedure tied to the protocol?",
 					id: "investigator_signature_before_procedure",
 				}
+			]
+		},
+		5: {
+			title: 'Questions for the patient (1/2)',
+			questions: [
+				{
+					question: "Have you been informed about the study?",
+					id: "patient_informed_about_study",
+				},
+				{
+					question: "Have you understood the documentation you are about to sign?",
+					id: "patient_understood_documentation",
+				},
+				{
+					question: "Have you asked all the questions you had about the study?",
+					id: "patient_asked_all_questions",
+				},
+				{
+					question: "Has the investigator answered all your questions?",
+					id: "patient_answered_all_questions",
+				},
+			]
+		},
+		6: {
+			title: 'Questions for the patient (2/2)',
+			questions: [
+				{
+					question: "Do you confirm that you are voluntarily participating in this study?",
+					id: "patient_voluntary_participation",
+				},
+				{
+					question: "Have you been given enough time to consider your participation?",
+					id: "patient_had_time_to_consider",
+				},
+				{
+					question: "Do you understand that you can stop participation at any time?",
+					id: "patient_can_stop_participation",
+				},
 			]
 		},
 		7: {
@@ -200,8 +200,8 @@
 
 <style>
 	main {
-		min-height: 100vh;
-		height: 100vh;
+		min-height: calc(100vh - 4rem); /* Adjust for navbar */
+		height: calc(100vh - 4rem); /* Adjust for navbar */
 		background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 		display: flex;
 		align-items: center;
@@ -247,7 +247,6 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		/* background-color: white; */
 		border-bottom-left-radius: inherit;
 		border-bottom-right-radius: inherit;
 	}
