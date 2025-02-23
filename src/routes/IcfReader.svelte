@@ -18,7 +18,7 @@
 
     onMount(async () => {
         // const response = await fetch('/');
-        const response = {name: 'demo_icf.pdf', url: '/demo_icf.pdf'}
+        const response = {name: 'demo_icf.pdf', url: '/icf-portal/demo_icf.pdf'}
         // pdfFiles = await response.json();
         pdfFiles = [response];
     });
