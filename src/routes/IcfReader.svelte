@@ -8,7 +8,7 @@
 
     // Set worker using the local worker file
     PDFJS.GlobalWorkerOptions.workerSrc = new URL(
-        'pdfjs-dist/build/pdf.worker.mjs',
+        'pdfjs-dist/build/pdf.worker.js',
         import.meta.url
     ).toString();
 
