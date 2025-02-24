@@ -1,6 +1,5 @@
 <script>	
 	import { fade, fly } from 'svelte/transition';
-	import CardCustom from './CardCustom.svelte';
 	import Questionnaire from './Questionnaire.svelte';
 	import IcfReader from './IcfReader.svelte';
 	import EmailConfirmation from './EmailConfirmation.svelte';
@@ -152,157 +151,67 @@
 	$inspect(formState);
 </script>
 
-<main>
-	<div class="content-wrapper">
-		<CardCustom>
-			<h1 class="step-title">
-				{questions[formState.step].title}
-			</h1>
+<main class="min-h-[calc(100vh-4rem)] h-[calc(100vh-4rem)] bg-base-200 flex items-center overflow-hidden">
+	<div class="w-full mx-auto p-4">
+		<div class="card bg-base-100 shadow-xl max-w-[800px] mx-auto min-h-[calc(100vh-8rem)]">
+			<div class="card-body flex flex-col h-full relative overflow-y-auto">
+				<h1 class="card-title text-xl md:text-2xl font-bold">
+					{questions[formState.step].title}
+				</h1>
 
-			<!-- Progress bar -->
-			<div class="progress-container">
-				<div 
-					class="progress-bar" 
-					style="width: {(formState.step / (Object.keys(questions).length - 1)) * 100}%"
-				></div>
+				<!-- Progress bar -->
+				<div class="w-full h-2 bg-base-200 rounded-full overflow-hidden mb-4">
+					<div 
+						class="h-full bg-primary transition-all duration-300"
+						style="width: {(formState.step / (Object.keys(questions).length - 1)) * 100}%"
+					></div>
+				</div>
+
+				<!-- Questionnaire or custom component -->
+				{#key formState.step}
+					<div
+						in:fly={{ x: 100, duration: 400, delay: 300, opacity: 0 }} 
+						out:fade={{ duration: 200 }}
+					>
+						{#if questions[formState.step].questions}
+							<Questionnaire
+								questions={questions}
+								step={formState.step}
+								bind:answers={formState.answers}
+							/>
+						{:else if questions[formState.step].component}
+							<Comp/>
+						{/if}
+					</div>
+				{/key}
+
+				<!-- Buttons -->
+				<div class="card-actions justify-between mt-auto pt-4">
+					<button 
+						class="btn btn-primary"
+						onclick={() => {
+							if (formState.step > 0) formState.step--;
+						}}
+						disabled={formState.step === 0}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+							<path d="M15 18l-6-6 6-6"/>
+						</svg>
+						Previous
+					</button>
+					<button 
+						class="btn btn-primary"
+						onclick={() => {
+							if (formState.step < Object.keys(questions).length - 1) formState.step++;
+						}}
+					>
+						Next
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+							<path d="M9 18l6-6-6-6"/>
+						</svg>
+					</button>
+				</div>
 			</div>
-
-			<!-- Questionnaire or custom component -->
-			{#if questions[formState.step].questions}
-				<Questionnaire
-					questions={questions}
-					step={formState.step}
-					bind:answers={formState.answers}
-				/>
-			{:else if questions[formState.step].component}
-				<Comp/>
-			{/if}
-
-			<!-- Buttons -->
-			<div class="button-container">
-				<button 
-					class="btn-nav" 
-					onclick={() => {
-						if (formState.step > 0) formState.step--;
-					}}
-					disabled={formState.step === 0}
-				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M15 18l-6-6 6-6"/>
-					</svg>
-					Previous
-				</button>
-				<button 
-					class="btn-nav" 
-					onclick={() => {
-						if (formState.step < Object.keys(questions).length - 1) formState.step++;
-					}}
-				>
-					Next
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M9 18l6-6-6-6"/>
-					</svg>
-				</button>
-			</div>
-		</CardCustom>
+		</div>
 	</div>
-	 <!-- <div>{JSON.stringify(formState)}</div> -->
 </main>
-
-
-<style>
-	main {
-		min-height: calc(100vh - 4rem); /* Adjust for navbar */
-		height: calc(100vh - 4rem); /* Adjust for navbar */
-		background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-		display: flex;
-		align-items: center;
-		overflow: hidden;
-	}
-
-	.content-wrapper {
-		width: 100%;
-		margin: 0 auto;
-		padding: 1rem;
-		height: auto;
-	}
-
-	:global(.custom-card) {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		position: relative;
-	}
-
-	.progress-container {
-		width: calc(100% - 2rem); /* Subtract padding */
-		height: 8px;
-		background-color: #e0e0e0;
-		border-radius: 4px;
-		overflow: hidden;
-		margin: 0 1rem 1rem 1rem;
-	}
-
-	.progress-bar {
-		height: 100%;
-		background-color: #007bff;
-		transition: width 0.3s ease;
-	}
-
-	.button-container {
-		height: 64px;
-		display: flex;
-		justify-content: space-between;
-		gap: 1rem;
-		padding: 0.75rem 1rem;
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		border-bottom-left-radius: inherit;
-		border-bottom-right-radius: inherit;
-	}
-
-	.btn-nav {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.75rem 1rem;
-		font-size: clamp(0.875rem, 2.5vw, 1.125rem);
-		background-color: #007bff;
-		color: white;
-		border: none;
-		border-radius: 10px;
-		cursor: pointer;
-		font-weight: 600;
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		flex: 1;
-		justify-content: center;
-	}
-
-	.btn-nav:hover:not(:disabled) {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	}
-
-	.btn-nav:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-		background-color: #e0e0e0;
-	}
-
-	.btn-nav svg {
-		width: 1.25rem;
-		height: 1.25rem;
-	}
-
-	.step-title {
-		font-family: 'Poppins', 'Inter', system-ui, sans-serif;
-		font-size: clamp(1.125rem, 3vw, 1.75rem);
-		color: #2c3e50;
-		text-align: left;
-		padding: 1rem;
-		font-weight: 700;
-		margin-bottom: 1rem;
-	}
-</style>

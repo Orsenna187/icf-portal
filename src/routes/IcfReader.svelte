@@ -19,28 +19,31 @@
     onMount(async () => {
         const dev = process.env.NODE_ENV === 'development';
         const basePath = dev ? '' : '/icf-portal';
-        const response = {
+        pdfFiles = [{
             name: 'demo_icf.pdf', 
             url: `${basePath}/demo_icf.pdf`
-        };
-        pdfFiles = [response];
+        }];
     });
 
     async function loadPDF(node, url) {
         const loadingTask = PDFJS.getDocument(url);
         const pdf = await loadingTask.promise;
         const page = await pdf.getPage(1);
-        const scale = 1.5;
-        const viewport = page.getViewport({ scale });
-        const canvas = node;
-        const context = canvas.getContext("2d");
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        const renderContext = {
-            canvasContext: context,
-            viewport: viewport,
-        };
-        await page.render(renderContext);
+        
+        const containerWidth = node.parentElement.clientWidth - 64;
+        const viewport = page.getViewport({ scale: 1.0 });
+        
+        // Scale to fit container width
+        const scale = containerWidth / viewport.width;
+        const scaledViewport = page.getViewport({ scale });
+        
+        node.height = scaledViewport.height;
+        node.width = scaledViewport.width;
+        
+        await page.render({
+            canvasContext: node.getContext("2d"),
+            viewport: scaledViewport,
+        });
     }
 
     function openPdf(pdf) {
@@ -54,104 +57,45 @@
     }
 </script>
 
-<main>    
-    <div class="pdf-list">
+<div class="flex-1 relative overflow-hidden mb-16">
+    <div class="relative flex flex-col gap-2 px-4">
         {#each pdfFiles as pdf}
-            <div class="pdf-item" role="button" onclick={() => openPdf(pdf)}>
-                <MdiFilePdfBox class="w-8 h-8 text-red-500"/>
-                <span class="pdf-name">{pdf.name}</span>
-                <span class="view-text">View PDF</span>
-            </div>
+            <label class="flex items-center gap-3 p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300">
+                <MdiFilePdfBox class="w-8 h-8 text-error"/>
+                <span class="flex-grow">{pdf.name}</span>
+                <button 
+                    class="btn btn-primary btn-sm"
+                    onclick={() => openPdf(pdf)}
+                >
+                    View PDF
+                </button>
+            </label>
         {/each}
     </div>
+</div>
 
-    {#if showViewer && selectedPdf}
-        <div class="pdf-viewer" transition:fade onclick={closeViewer}>
-            <div class="viewer-content" onclick={d => d.stopPropagation()}>
-                <button class="close-button" onclick={closeViewer}>×</button>
+{#if showViewer && selectedPdf}
+    <div 
+        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+        onclick={closeViewer}
+        onkeydown={closeViewer}
+        role="presentation"
+    >
+        <div 
+            class="card bg-base-100 w-full max-w-[800px] max-h-[calc(100vh-8rem)] overflow-auto"
+            onclick={d => d.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+        >
+            <div class="card-body relative">
+                <button 
+                    class="btn btn-sm btn-circle absolute right-2 top-2"
+                    onclick={closeViewer}
+                >
+                    ✕
+                </button>
                 <canvas use:loadPDF={selectedPdf.url}></canvas>
             </div>
         </div>
-    {/if}
-</main>
-
-<style>
-    .pdf-list {
-        display: grid;
-        gap: 1rem;
-        padding: 1rem;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .pdf-item {
-        background: #f5f5f5;
-        padding: 1rem;
-        border-radius: 8px;
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-
-    .pdf-item:hover {
-        background: #e5e5e5;
-    }
-
-    .view-text {
-        color: #2563eb;
-        font-size: 0.9rem;
-    }
-
-    .pdf-viewer {
-        position: fixed;
-        border-radius: 8px;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .viewer-content {
-        position: relative;
-        background: white;
-        padding: 2rem;
-        margin: 0 2rem;
-        border-radius: 8px;
-        max-height: calc(100vh - 12rem); /* Account for navbar and padding */
-        max-width: min(800px, 90vw); /* Match card max-width */
-        overflow: auto;
-    }
-
-    .close-button {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: none;
-        border: none;
-        font-size: 2rem;
-        cursor: pointer;
-        color: #666;
-    }
-
-    .close-button:hover {
-        color: #000;
-    }
-
-    canvas {
-        display: block;
-        max-width: 100%;
-        height: auto;
-    }
-
-    .pdf-name {
-        flex-grow: 1;
-        text-align: left;
-    }
-</style>
+    </div>
+{/if}
