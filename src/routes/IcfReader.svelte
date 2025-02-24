@@ -4,7 +4,7 @@
     import * as PDFJS from "pdfjs-dist";
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
-    import { FilePdfOutline } from 'flowbite-svelte-icons';
+    import MdiFilePdfBox from 'virtual:icons/mdi/file-pdf-box';
 
     // Set worker using the local worker file
     PDFJS.GlobalWorkerOptions.workerSrc = new URL(
@@ -58,7 +58,7 @@
     <div class="pdf-list">
         {#each pdfFiles as pdf}
             <div class="pdf-item" role="button" onclick={() => openPdf(pdf)}>
-                <FilePdfOutline class="w-6 h-6 text-red-500"/>
+                <MdiFilePdfBox class="w-8 h-8 text-red-500"/>
                 <span class="pdf-name">{pdf.name}</span>
                 <span class="view-text">View PDF</span>
             </div>

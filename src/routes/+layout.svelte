@@ -5,7 +5,12 @@
 	let isMenuOpen = $state(false);
 	let { children } = $props();
 	let activeUrl = $derived($page.url.pathname);
-	import { NewspaperOutline, BuildingOutline, UserOutline, FolderOutline, ShareNodesOutline, CalendarWeekOutline } from 'flowbite-svelte-icons'
+	import MdiNewspaper from 'virtual:icons/mdi/newspaper';
+	import MdiHospitalBuilding from 'virtual:icons/mdi/hospital-building';
+	import MdiPatient from 'virtual:icons/mdi/patient';
+	import MdiFolderOutline from 'virtual:icons/mdi/folder-outline';
+	import MdiShareVariantOutline from 'virtual:icons/mdi/share-variant-outline';
+	import MdiCalendarMonthOutline from 'virtual:icons/mdi/calendar-month-outline';
 
 	// Add base path handling for GitHub Pages
 	const dev = process.env.NODE_ENV === 'development';
@@ -21,32 +26,32 @@
 		{ 
 			href: '/', 
 			text: 'Newsletters',
-			Icon: NewspaperOutline
+			Icon: MdiNewspaper
 		},
 		{
 			href: '/sites',
 			text: 'Sites',
-			Icon: BuildingOutline
+			Icon: MdiHospitalBuilding
 		},
 		{
 			href: '/patients',
 			text: 'Patients',
-			Icon: UserOutline
+			Icon: MdiPatient
 		},
 		{
 			href: '/repository',
 			text: 'Repository',
-			Icon: FolderOutline
+			Icon: MdiFolderOutline
 		},
 		{
 			href: '/documents',
 			text: 'Shared Documents',
-			Icon: ShareNodesOutline
+			Icon: MdiShareVariantOutline
 		},
 		{
 			href: '/visits',
 			text: 'Visits',
-			Icon: CalendarWeekOutline
+			Icon: MdiCalendarMonthOutline
 		},
 	];
 
@@ -61,7 +66,6 @@
 				<img src="{basePath}/medcm.png" class="h-8 sm:h-8" alt="Logo" />
 				<span class="text-2xl font-bold text-gray-700 ml-2">MedCM</span>
 			</a>
-
 			<!-- Desktop Menu -->
 			<div class="hidden md:flex items-center space-x-8">
 				{#each topNavItems as { href, text }}

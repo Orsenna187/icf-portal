@@ -1,6 +1,5 @@
 <script>	
 	import { fade, fly } from 'svelte/transition';
-	import { Card } from 'flowbite-svelte';
 	import CardCustom from './CardCustom.svelte';
 	import Questionnaire from './Questionnaire.svelte';
 	import IcfReader from './IcfReader.svelte';
