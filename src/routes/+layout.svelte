@@ -38,7 +38,7 @@
 
 	const sideNavItems = [
 		{ 
-			href: `${basePath}/newsletter`, 
+			href: `${basePath}/`, 
 			text: 'Newsletters',
 			Icon: MdiNewspaper
 		},
