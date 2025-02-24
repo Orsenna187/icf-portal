@@ -128,9 +128,22 @@
 			component: Summary
 		}
 	};
-	
+
+	// Initialize answers object with all question IDs set to false
+	const initializeAnswers = () => {
+		const answers = {};
+		Object.values(questions).forEach(section => {
+			if (section.questions) {
+				section.questions.forEach(q => {
+					answers[q.id] = false;
+				});
+			}
+		});
+		return answers;
+	};
+
 	let formState = $state({
-		answers: {},
+		answers: initializeAnswers(),
 		step: 0,
 		error: '',
 	});
