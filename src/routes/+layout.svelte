@@ -38,32 +38,32 @@
 
 	const sideNavItems = [
 		{ 
-			href: '/newsletter', 
+			href: `${basePath}/newsletter`, 
 			text: 'Newsletters',
 			Icon: MdiNewspaper
 		},
 		{
-			href: '/sites',
+			href: `${basePath}/sites`,
 			text: 'Sites',
 			Icon: MdiHospitalBuilding
 		},
 		{
-			href: '/patients',
+			href: `${basePath}/patients`,
 			text: 'Patients',
 			Icon: MdiPatient
 		},
 		{
-			href: '/repository',
+			href: `${basePath}/repository`,
 			text: 'Repository',
 			Icon: MdiFolderOutline
 		},
 		{
-			href: '/shared_documents',
+			href: `${basePath}/shared_documents`,
 			text: 'Shared Documents',
 			Icon: MdiShareVariantOutline
 		},
 		{
-			href: '/visits',
+			href: `${basePath}/visits`,
 			text: 'Visits',
 			Icon: MdiCalendarMonthOutline
 		},
@@ -75,7 +75,7 @@
 	<!-- Top Navbar -->
 	<nav class="navbar border-b border-base-200 shadow-md">
 		<div class="flex-1 px-4">
-			<a href="/" class="flex items-center gap-2">
+			<a href="{basePath}/" class="flex items-center gap-2">
 				<img src="{basePath}/medcm.png" class="h-8" alt="Logo" />
 				<span class="text-2xl font-bold">MedCM</span>
 			</a>
