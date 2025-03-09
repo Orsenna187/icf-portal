@@ -39,7 +39,7 @@
 	const sideNavItems = [
 		{ 
 			href: `${basePath}/`, 
-			text: 'Newsletters',
+			text: 'Study Newsletters',
 			Icon: MdiNewspaper
 		},
 		{
@@ -54,17 +54,22 @@
 		},
 		{
 			href: `${basePath}/repository`,
-			text: 'Repository',
+			text: "Study Team Repository",
 			Icon: MdiFolderOutline
 		},
 		{
 			href: `${basePath}/shared_documents`,
-			text: 'Shared Documents',
+			text: 'Shared With Sites',
 			Icon: MdiShareVariantOutline
 		},
 		{
 			href: `${basePath}/visits`,
-			text: 'Visits',
+			text: 'Visit Calculator',
+			Icon: MdiCalendarMonthOutline
+		},
+		{
+			href: `${basePath}/visits`,
+			text: 'Safety Letters (SUSARS)',
 			Icon: MdiCalendarMonthOutline
 		},
 	];
