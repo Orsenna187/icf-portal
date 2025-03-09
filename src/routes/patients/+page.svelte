@@ -5,13 +5,13 @@
     import PatientModal from '../../components/PatientModal.svelte';
 
     const firebaseConfig = {
-        apiKey: "AIzaSyAeF-HyA2J-vcDJKKz7m2JC4YhTicMcpSQ",
-        authDomain: "icfportal.firebaseapp.com",
-        projectId: "icfportal",
-        storageBucket: "icfportal.firebasestorage.app",
-        messagingSenderId: "488487858201",
-        appId: "1:488487858201:web:bf11da8290a8bcf8ebba88",
-        measurementId: "G-REDMM2NNDC"
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+        measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
     };
 
     let patients = []; 
