@@ -1,9 +1,52 @@
 <script>	
 	import { fade, fly } from 'svelte/transition';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { db } from '../../../lib/firebase';
+	import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 	import Questionnaire from './Questionnaire.svelte';
 	import IcfReader from './IcfReader.svelte';
 	import EmailConfirmation from './EmailConfirmation.svelte';
 	import Summary from './Summary.svelte';
+	import SendEmailLink from './SendEmailLink.svelte';
+	import WaitingForSignature from './WaitingForSignature.svelte';
+
+	// Get patient ID from URL if provided
+	const patientId = $page.url.searchParams.get('patient');
+	let selectedPatient = null;
+	let isLoadingPatient = false;
+	let patientError = null;
+
+	// Fetch patient data if ID is provided
+	async function fetchPatient() {
+		if (!patientId) return;
+		
+		try {
+			isLoadingPatient = true;
+			patientError = null;
+			
+			const patientRef = doc(db, "patients", patientId);
+			const docSnap = await getDoc(patientRef);
+			
+			if (!docSnap.exists()) {
+				patientError = "Patient not found";
+				return;
+			}
+			
+			selectedPatient = {
+				id: docSnap.id,
+				...docSnap.data()
+			};
+			
+		} catch (err) {
+			console.error("Error fetching patient:", err);
+			patientError = "Failed to load patient data";
+		} finally {
+			isLoadingPatient = false;
+		}
+	}
+
+	onMount(fetchPatient);
 
 	const questions = {
 		0: {
@@ -80,49 +123,19 @@
 			]
 		},
 		5: {
-			title: 'Questions for the patient (1/2)',
-			questions: [
-				{
-					question: "Have you been informed about the study?",
-					id: "patient_informed_about_study",
-				},
-				{
-					question: "Have you understood the documentation you are about to sign?",
-					id: "patient_understood_documentation",
-				},
-				{
-					question: "Have you asked all the questions you had about the study?",
-					id: "patient_asked_all_questions",
-				},
-				{
-					question: "Has the investigator answered all your questions?",
-					id: "patient_answered_all_questions",
-				},
-			]
+			title: 'Send signing link to patient',
+			component: SendEmailLink
 		},
 		6: {
-			title: 'Questions for the patient (2/2)',
-			questions: [
-				{
-					question: "Do you confirm that you are voluntarily participating in this study?",
-					id: "patient_voluntary_participation",
-				},
-				{
-					question: "Have you been given enough time to consider your participation?",
-					id: "patient_had_time_to_consider",
-				},
-				{
-					question: "Do you understand that you can stop participation at any time?",
-					id: "patient_can_stop_participation",
-				},
-			]
+			title: 'Waiting for patient signature',
+			component: WaitingForSignature
 		},
 		7: {
-			title: "ICFs have been signed...  (placeholder)",
+			title: "ICF has been signed",
 			component: EmailConfirmation
 		},
 		8: {
-			title: "Summary has been sent... (placeholder)",
+			title: "Summary",
 			component: Summary
 		}
 	};
@@ -146,9 +159,19 @@
 		error: '',
 	});
 
-	let Comp = $derived(questions[formState.step].component);
+	// Handle email sent event
+	function handleEmailSent() {
+		// Move to the waiting for signature step
+		formState.step = 6;
+	}
 
-	$inspect(formState);
+	// Handle signing complete event
+	function handleSigningComplete() {
+		// Move to the confirmation step
+		formState.step = 7;
+	}
+
+	let Comp = $derived(questions[formState.step].component);
 </script>
 
 <main class="min-h-[calc(100vh-4rem)] h-[calc(100vh-4rem)] bg-base-200 flex items-center overflow-hidden">
@@ -180,7 +203,13 @@
 								bind:answers={formState.answers}
 							/>
 						{:else if questions[formState.step].component}
-							<Comp/>
+							{#if formState.step === 5}
+								<SendEmailLink patientData={selectedPatient} onEmailSent={handleEmailSent} />
+							{:else if formState.step === 6}
+								<WaitingForSignature patientData={selectedPatient} onSigningComplete={handleSigningComplete} />
+							{:else}
+								<Comp/>
+							{/if}
 						{/if}
 					</div>
 				{/key}
@@ -192,7 +221,7 @@
 						onclick={() => {
 							if (formState.step > 0) formState.step--;
 						}}
-						disabled={formState.step === 0}
+						disabled={formState.step === 0 || formState.step === 6}
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
 							<path d="M15 18l-6-6 6-6"/>
@@ -204,6 +233,7 @@
 						onclick={() => {
 							if (formState.step < Object.keys(questions).length - 1) formState.step++;
 						}}
+						disabled={formState.step === 5 || formState.step === 6}
 					>
 						Next
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">

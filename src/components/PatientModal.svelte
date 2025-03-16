@@ -14,6 +14,7 @@
     // New patient form data
     let newPatient = {
         name: '',
+        email: '',
         gender: 'Male',
         site: '',
         city: '',
@@ -71,8 +72,15 @@
     
     // Save patient to Firebase (create or update)
     async function savePatient() {
-        if (!newPatient.name || !newPatient.site || !newPatient.city) {
+        if (!newPatient.name || !newPatient.email || !newPatient.site || !newPatient.city) {
             formError = "Please fill in all required fields";
+            return;
+        }
+        
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(newPatient.email)) {
+            formError = "Please enter a valid email address";
             return;
         }
         
@@ -119,6 +127,7 @@
     function resetForm() {
         newPatient = {
             name: '',
+            email: '',
             gender: 'Male',
             site: '',
             city: '',
@@ -188,6 +197,21 @@
                             type="text" 
                             bind:value={newPatient.name} 
                             placeholder="Patient name" 
+                            class="input input-bordered w-full" 
+                            required
+                        />
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="form-control">
+                        <label class="label" for="patient-email">
+                            <span class="label-text">Email *</span>
+                        </label>
+                        <input 
+                            id="patient-email"
+                            type="email" 
+                            bind:value={newPatient.email} 
+                            placeholder="Patient email" 
                             class="input input-bordered w-full" 
                             required
                         />

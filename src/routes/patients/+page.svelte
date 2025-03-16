@@ -108,6 +108,7 @@
 
     // Add filter state
     let nameFilter = '';
+    let emailFilter = '';
     let genderFilter = 'all';
     let statusFilter = 'all';
     let tagFilter = '';
@@ -148,6 +149,7 @@
     // Filter function
     $: filteredPatients = patients
         .filter(p => p.name.toLowerCase().includes(nameFilter.toLowerCase()))
+        .filter(p => p.email && p.email.toLowerCase().includes(emailFilter.toLowerCase()))
         .filter(p => genderFilter === 'all' || p.gender === genderFilter)
         .filter(p => statusFilter === 'all' || p.icf_status === statusFilter)
         .filter(p => !tagFilter || p.tags.includes(tagFilter))
@@ -170,6 +172,19 @@
                 type="text" 
                 bind:value={nameFilter} 
                 placeholder="Search name..." 
+                class="input input-bordered w-full max-w-xs" 
+            />
+        </div>
+
+        <div class="form-control">
+            <label class="label" for="email-filter">
+                <span class="label-text">Search by email</span>
+            </label>
+            <input 
+                id="email-filter"
+                type="text" 
+                bind:value={emailFilter} 
+                placeholder="Search email..." 
                 class="input input-bordered w-full max-w-xs" 
             />
         </div>
@@ -267,6 +282,12 @@
                                 <span class="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                             {/if}
                         </th>
+                        <th class="cursor-pointer" on:click={() => handleSort('email')}>
+                            Email
+                            {#if sortField === 'email'}
+                                <span class="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                            {/if}
+                        </th>
                         <th class="cursor-pointer" on:click={() => handleSort('gender')}>
                             Gender
                             {#if sortField === 'gender'}
@@ -311,6 +332,7 @@
                                     </div>
                                 </div>
                             </td>
+                            <td>{patient.email}</td>
                             <td>{patient.gender}</td>
                             <td>
                                 {patient.site}
@@ -332,9 +354,9 @@
                             <td>{new Date(patient.next_visit).toLocaleDateString()}</td>
                             <td>
                                 {#if patient.icf_status === 'not sent'}
-                                    <button class="btn btn-primary btn-sm">Send ICF</button>
+                                    <button class="btn btn-primary btn-sm" on:click={() => openEditModal(patient)}>Send ICF</button>
                                 {:else if patient.icf_status === 'sent'}
-                                    <a href={`${basePath}/patients/signing_room`} class="btn btn-warning btn-sm">Sign ICF</a>
+                                    <a href={`${basePath}/patients/signing_room?patient=${patient.id}`} class="btn btn-warning btn-sm">Sign ICF</a>
                                 {:else if patient.icf_status === 'signed'}
                                     <button class="btn btn-success btn-sm">View ICF</button>
                                 {/if}
