@@ -1,6 +1,6 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
-    import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+    import { createEventDispatcher, onMount } from 'svelte';
+    import { collection, addDoc, doc, updateDoc, serverTimestamp, getDocs } from 'firebase/firestore';
 
     // Props
     export let db;
@@ -22,6 +22,11 @@
         next_visit: ''
     };
     
+    // Sites data
+    let sites = [];
+    let isLoadingSites = false;
+    let siteError = null;
+    
     // Temporary tag input
     let tagInput = '';
     
@@ -38,6 +43,30 @@
         };
     } else if (showModal && !editMode) {
         resetForm();
+    }
+    
+    // Fetch sites from Firestore
+    async function fetchSites() {
+        try {
+            isLoadingSites = true;
+            siteError = null;
+            const querySnapshot = await getDocs(collection(db, "site"));
+            sites = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            console.log("Fetched sites for dropdown:", sites);
+        } catch (err) {
+            console.error("Error fetching sites:", err);
+            siteError = `Failed to load sites: ${err.message}`;
+        } finally {
+            isLoadingSites = false;
+        }
+    }
+    
+    // When the modal is shown, fetch sites
+    $: if (showModal) {
+        fetchSites();
     }
     
     // Save patient to Firebase (create or update)
@@ -119,6 +148,20 @@
     function removeTag(tag) {
         newPatient.tags = newPatient.tags.filter(t => t !== tag);
     }
+    
+    // Update city based on selected site
+    $: {
+        if (newPatient.site) {
+            const selectedSite = sites.find(s => s.name === newPatient.site);
+            if (selectedSite && selectedSite.adress) {
+                // Extract city from address if available
+                const addressParts = selectedSite.adress.split(',');
+                if (addressParts.length > 1) {
+                    newPatient.city = addressParts[addressParts.length - 1].trim();
+                }
+            }
+        }
+    }
 </script>
 
 {#if showModal}
@@ -171,14 +214,28 @@
                         <label class="label" for="patient-site">
                             <span class="label-text">Site *</span>
                         </label>
-                        <input 
-                            id="patient-site"
-                            type="text" 
-                            bind:value={newPatient.site} 
-                            placeholder="Hospital or clinic name" 
-                            class="input input-bordered w-full" 
-                            required
-                        />
+                        {#if isLoadingSites}
+                            <div class="select select-bordered w-full flex items-center justify-center">
+                                <span class="loading loading-spinner loading-xs mr-2"></span>
+                                Loading sites...
+                            </div>
+                        {:else if siteError}
+                            <div class="select select-bordered w-full text-error">
+                                Error loading sites
+                            </div>
+                        {:else}
+                            <select 
+                                id="patient-site"
+                                bind:value={newPatient.site} 
+                                class="select select-bordered w-full" 
+                                required
+                            >
+                                <option value="">Select a site</option>
+                                {#each sites as site}
+                                    <option value={site.name}>{site.name}</option>
+                                {/each}
+                            </select>
+                        {/if}
                     </div>
                     
                     <!-- City -->
