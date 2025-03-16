@@ -33,19 +33,31 @@
             
             const signingLink = generateSigningLink();
             
-            // In a real application, you would use a server endpoint to send the email
-            // For this demo, we'll simulate sending an email and update the patient's status
-            
-            // Update patient status to 'sent' in Firestore
+            // Send email using the server endpoint
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: patientData.email,
+                    subject: 'Sign Your ICF Document',
+                    patientName: patientData.name,
+                    signingLink: signingLink
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to send email');
+            }
+
+            // Update patient status in Firestore
             const patientRef = doc(db, "patients", patientData.id);
             await updateDoc(patientRef, {
                 icf_status: 'sent',
                 signing_link: signingLink,
                 signing_token: signingLink.split('token=')[1]
             });
-            
-            // Simulate email sending delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
             
             success = true;
             emailSent = true;

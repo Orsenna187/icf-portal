@@ -34,11 +34,11 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"@sendgrid/mail": "^8.1.4",
 		"@svelteuidev/composables": "^0.15.7",
 		"@svelteuidev/core": "^0.15.7",
 		"@svelteuidev/motion": "^0.15.7",
 		"@svelteuidev/prism": "^0.15.7",
-		"firebase": "^11.4.0",
-		"pdfjs-dist": "3.11.174"
+		"firebase": "^11.4.0"
 	}
 }
