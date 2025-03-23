@@ -1,1 +1,1 @@
-export const prerender = true;
+// Remove prerender export to disable prerendering
