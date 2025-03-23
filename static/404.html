@@ -4,10 +4,8 @@
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-        // Get the current path excluding the repo name
-        const path = window.location.pathname.replace('/icf-portal', '');
         // Redirect to the main app with the current path
-        window.location.href = '/icf-portal/?path=' + encodeURIComponent(path);
+        window.location.href = '/?path=' + encodeURIComponent(window.location.pathname);
     </script>
 </head>
 <body>

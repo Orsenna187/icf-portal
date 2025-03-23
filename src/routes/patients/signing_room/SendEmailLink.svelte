@@ -15,9 +15,7 @@
     // Generate a unique signing link
     function generateSigningLink() {
         const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        const dev = process.env.NODE_ENV === 'development';
-        const basePath = dev ? '' : '/icf-portal';
-        return `${window.location.origin}${basePath}/patients/sign/${patientData.id}?token=${token}`;
+        return `${window.location.origin}/patients/sign/${patientData.id}?token=${token}`;
     }
     
     // Send email with signing link
