@@ -99,9 +99,6 @@
         fetchPatients();
     });
 
-    const dev = process.env.NODE_ENV === 'development';
-    const basePath = dev ? '' : '/icf-portal';
-
     // Add sorting state
     let sortField = 'name';
     let sortDirection = 'asc';
@@ -356,7 +353,7 @@
                                 {#if patient.icf_status === 'not sent'}
                                     <button class="btn btn-primary btn-sm" on:click={() => openEditModal(patient)}>Send ICF</button>
                                 {:else if patient.icf_status === 'sent'}
-                                    <a href={`${basePath}/patients/signing_room?patient=${patient.id}`} class="btn btn-warning btn-sm">Sign ICF</a>
+                                    <a href={`/patients/signing_room?patient=${patient.id}`} class="btn btn-warning btn-sm">Sign ICF</a>
                                 {:else if patient.icf_status === 'signed'}
                                     <button class="btn btn-success btn-sm">View ICF</button>
                                 {/if}

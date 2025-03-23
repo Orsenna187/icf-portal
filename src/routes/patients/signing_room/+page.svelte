@@ -11,8 +11,7 @@
 	import SendEmailLink from './SendEmailLink.svelte';
 	import WaitingForSignature from './WaitingForSignature.svelte';
 
-	// Get patient ID from URL if provided
-	const patientId = $page.url.searchParams.get('patient');
+	let patientId = null;
 	let selectedPatient = null;
 	let isLoadingPatient = false;
 	let patientError = null;
@@ -46,7 +45,11 @@
 		}
 	}
 
-	onMount(fetchPatient);
+	onMount(() => {
+		// Get patient ID from URL if provided
+		patientId = $page.url.searchParams.get('patient');
+		fetchPatient();
+	});
 
 	const questions = {
 		0: {
