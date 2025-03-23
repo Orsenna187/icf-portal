@@ -149,8 +149,7 @@
     }
     
     // Check if all questions in current step are answered
-    $: canProceed = currentStep < questions.length - 1 && 
-        questions[currentStep].questions.every(q => answers[q.id] === true);
+    $: canProceed = questions[currentStep].questions.every(q => answers[q.id] === true);
     
     // Check if all questions are answered for final submission
     $: canSign = questions.flatMap(section => section.questions)
@@ -159,10 +158,10 @@
     onMount(fetchPatient);
 </script>
 
-<main class="min-h-screen bg-base-200 py-8">
+<main class="min-h-screen bg-base-200 py-4 sm:py-8">
     <div class="container mx-auto px-4">
         <div class="card bg-base-100 shadow-xl max-w-3xl mx-auto">
-            <div class="card-body">
+            <div class="card-body p-4 sm:p-6">
                 {#if isLoading && !success}
                     <div class="flex flex-col items-center justify-center py-12">
                         <div class="loading loading-spinner loading-lg text-primary mb-4"></div>
@@ -191,94 +190,89 @@
                         </div>
                     </div>
                 {:else if patient}
-                    <div>
-                        <h1 class="text-2xl font-bold mb-4">ICF Signing Portal</h1>
-                        <div class="bg-base-200 p-4 rounded-lg mb-6">
-                            <p><strong>Patient:</strong> {patient.name}</p>
-                            <p><strong>Email:</strong> {patient.email}</p>
-                        </div>
-                        
-                        <!-- Progress bar -->
-                        <div class="w-full h-2 bg-base-200 rounded-full overflow-hidden mb-6">
-                            <div 
-                                class="h-full bg-primary transition-all duration-300"
-                                style="width: {(currentStep / (questions.length + (hasAgreed ? 0 : 1))) * 100}%"
-                            ></div>
-                        </div>
-                        
-                        {#key currentStep}
-                            <div in:fly={{ x: 100, duration: 400, delay: 300, opacity: 0 }} out:fade={{ duration: 200 }}>
-                                {#if currentStep < questions.length}
-                                    <!-- Questions -->
-                                    <h2 class="text-xl font-semibold mb-4">{questions[currentStep].title}</h2>
-                                    <div class="space-y-4 mb-6">
-                                        {#each questions[currentStep].questions as q}
+                    <div class="flex flex-col h-full">
+                        <div class="flex-1">
+                            <h1 class="text-xl sm:text-2xl font-bold mb-4">ICF Signing Portal</h1>
+                            <div class="bg-base-200 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
+                                <p class="text-sm sm:text-base"><strong>Patient:</strong> {patient.name}</p>
+                                <p class="text-sm sm:text-base"><strong>Email:</strong> {patient.email}</p>
+                            </div>
+                            
+                            <!-- Progress bar -->
+                            <div class="w-full h-2 bg-base-200 rounded-full overflow-hidden mb-4 sm:mb-6">
+                                <div 
+                                    class="h-full bg-primary transition-all duration-300"
+                                    style="width: {(currentStep / (questions.length + (hasAgreed ? 0 : 1))) * 100}%"
+                                ></div>
+                            </div>
+                            
+                            {#key currentStep}
+                                <div in:fly={{ x: 100, duration: 400, delay: 300, opacity: 0 }} out:fade={{ duration: 200 }}>
+                                    {#if currentStep < questions.length}
+                                        <!-- Questions -->
+                                        <h2 class="text-lg sm:text-xl font-semibold mb-4">{questions[currentStep].title}</h2>
+                                        <div class="space-y-3 sm:space-y-4 mb-6">
+                                            {#each questions[currentStep].questions as q}
+                                                <div class="form-control">
+                                                    <label class="label cursor-pointer justify-start gap-3 p-3 bg-base-200 rounded-lg hover:bg-base-300">
+                                                        <input 
+                                                            type="checkbox" 
+                                                            class="checkbox checkbox-primary" 
+                                                            bind:checked={answers[q.id]}
+                                                        />
+                                                        <span class="label-text text-sm sm:text-base">{q.question}</span>
+                                                    </label>
+                                                </div>
+                                            {/each}
+                                        </div>
+                                    {:else}
+                                        <!-- Final agreement -->
+                                        <h2 class="text-lg sm:text-xl font-semibold mb-4">Sign the Informed Consent Form</h2>
+                                        <div class="bg-base-200 p-3 sm:p-4 rounded-lg mb-6">
+                                            <p class="mb-4 text-sm sm:text-base">
+                                                By checking the box below, I confirm that I have read and understood the Informed Consent Form, 
+                                                and I voluntarily agree to participate in the study as described.
+                                            </p>
                                             <div class="form-control">
-                                                <label class="label cursor-pointer justify-start gap-4">
+                                                <label class="label cursor-pointer justify-start gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-200">
                                                     <input 
                                                         type="checkbox" 
                                                         class="checkbox checkbox-primary" 
-                                                        bind:checked={answers[q.id]}
+                                                        bind:checked={hasAgreed}
                                                     />
-                                                    <span class="label-text">{q.question}</span>
+                                                    <span class="label-text font-medium text-sm sm:text-base">I agree to participate in this study</span>
                                                 </label>
                                             </div>
-                                        {/each}
-                                    </div>
-                                {:else}
-                                    <!-- Final agreement -->
-                                    <h2 class="text-xl font-semibold mb-4">Sign the Informed Consent Form</h2>
-                                    <div class="bg-base-200 p-4 rounded-lg mb-6">
-                                        <p class="mb-4">
-                                            By checking the box below, I confirm that I have read and understood the Informed Consent Form, 
-                                            and I voluntarily agree to participate in the study as described.
-                                        </p>
-                                        <div class="form-control">
-                                            <label class="label cursor-pointer justify-start gap-4">
-                                                <input 
-                                                    type="checkbox" 
-                                                    class="checkbox checkbox-primary" 
-                                                    bind:checked={hasAgreed}
-                                                />
-                                                <span class="label-text font-medium">I agree to participate in this study</span>
-                                            </label>
                                         </div>
-                                    </div>
-                                {/if}
-                            </div>
-                        {/key}
+                                    {/if}
+                                </div>
+                            {/key}
+                        </div>
                         
                         <!-- Navigation buttons -->
-                        <div class="flex justify-between mt-6">
-                            <button 
-                                class="btn btn-outline"
-                                on:click={() => currentStep--}
-                                disabled={currentStep === 0 || isLoading}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                                </svg>
-                                Back
-                            </button>
-                            
-                            {#if currentStep < questions.length - 1}
+                        <div class="flex justify-between mt-6 pt-4 border-t border-base-200">
+                            {#if currentStep > 0}
                                 <button 
-                                    class="btn btn-primary"
-                                    on:click={() => currentStep++}
-                                    disabled={!canProceed || isLoading}
+                                    class="btn btn-outline"
+                                    on:click={() => currentStep--}
+                                    disabled={isLoading}
                                 >
-                                    Next
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                                     </svg>
+                                    Previous
                                 </button>
-                            {:else if currentStep === questions.length - 1}
+                            {:else}
+                                <div></div>
+                            {/if}
+                            
+                            {#if currentStep < questions.length}
                                 <button 
                                     class="btn btn-primary"
                                     on:click={() => currentStep++}
                                     disabled={!canProceed || isLoading}
                                 >
-                                    Continue to Sign
+                                    {currentStep === questions.length - 1 ? 'Continue to Sign' : 'Continue'}
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                     </svg>
