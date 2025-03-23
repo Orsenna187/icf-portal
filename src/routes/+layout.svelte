@@ -11,6 +11,7 @@
 	import MdiFolderOutline from 'virtual:icons/mdi/folder-outline';
 	import MdiShareVariantOutline from 'virtual:icons/mdi/share-variant-outline';
 	import MdiCalendarMonthOutline from 'virtual:icons/mdi/calendar-month-outline';
+	import MdiBellAlert from 'virtual:icons/mdi/bell-alert';
 
 	const studies = [
 		'demo-study-1',
@@ -66,7 +67,7 @@
 		{
 			href: '/visits',
 			text: 'Safety Letters (SUSARS)',
-			Icon: MdiCalendarMonthOutline
+			Icon: MdiBellAlert
 		},
 	];
 
