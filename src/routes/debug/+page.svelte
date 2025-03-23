@@ -49,8 +49,8 @@
                 <div class="bg-base-200 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
                     <h2 class="text-lg sm:text-xl font-semibold mb-4">Generate Test Signing Link</h2>
                     <div class="space-y-2">
-                        <p class="text-sm sm:text-base"><strong>Test Patient:</strong> {testPatient.name}</p>
-                        <p class="text-sm sm:text-base"><strong>Test Email:</strong> {testPatient.email}</p>
+                        <p class="text-sm sm:text-base whitespace-normal break-words"><strong>Test Patient:</strong> {testPatient.name}</p>
+                        <p class="text-sm sm:text-base whitespace-normal break-words"><strong>Test Email:</strong> {testPatient.email}</p>
                     </div>
                 </div>
                 
@@ -59,7 +59,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span>{error}</span>
+                        <span class="whitespace-normal break-words">{error}</span>
                     </div>
                 {/if}
                 
@@ -69,8 +69,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <div>
-                            <p class="font-bold">Test Signing Link Generated!</p>
-                            <a href={signingLink} target="_blank" class="link link-hover break-all text-sm sm:text-base">
+                            <p class="font-bold whitespace-normal break-words">Test Signing Link Generated!</p>
+                            <a href={signingLink} target="_blank" class="link link-hover break-all text-sm sm:text-base whitespace-normal break-words">
                                 {signingLink}
                             </a>
                         </div>

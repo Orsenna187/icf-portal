@@ -217,10 +217,10 @@
                                                     <label class="label cursor-pointer justify-start gap-3 p-3 bg-base-200 rounded-lg hover:bg-base-300">
                                                         <input 
                                                             type="checkbox" 
-                                                            class="checkbox checkbox-primary" 
+                                                            class="checkbox checkbox-primary shrink-0" 
                                                             bind:checked={answers[q.id]}
                                                         />
-                                                        <span class="label-text text-sm sm:text-base">{q.question}</span>
+                                                        <span class="label-text text-sm sm:text-base whitespace-normal break-words">{q.question}</span>
                                                     </label>
                                                 </div>
                                             {/each}
@@ -237,10 +237,10 @@
                                                 <label class="label cursor-pointer justify-start gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-200">
                                                     <input 
                                                         type="checkbox" 
-                                                        class="checkbox checkbox-primary" 
+                                                        class="checkbox checkbox-primary shrink-0" 
                                                         bind:checked={hasAgreed}
                                                     />
-                                                    <span class="label-text font-medium text-sm sm:text-base">I agree to participate in this study</span>
+                                                    <span class="label-text font-medium text-sm sm:text-base whitespace-normal break-words">I agree to participate in this study</span>
                                                 </label>
                                             </div>
                                         </div>
