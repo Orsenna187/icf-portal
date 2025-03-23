@@ -12,10 +12,6 @@
 	import MdiShareVariantOutline from 'virtual:icons/mdi/share-variant-outline';
 	import MdiCalendarMonthOutline from 'virtual:icons/mdi/calendar-month-outline';
 
-	// Add base path handling for GitHub Pages
-	const dev = process.env.NODE_ENV === 'development';
-	const basePath = dev ? '' : '/icf-portal';
-
 	const studies = [
 		'demo-study-1',
 		'demo-study-2',
@@ -38,37 +34,37 @@
 
 	const sideNavItems = [
 		{ 
-			href: `${basePath}/`, 
+			href: '/', 
 			text: 'Study Newsletters',
 			Icon: MdiNewspaper
 		},
 		{
-			href: `${basePath}/sites`,
+			href: '/sites',
 			text: 'Sites',
 			Icon: MdiHospitalBuilding
 		},
 		{
-			href: `${basePath}/patients`,
+			href: '/patients',
 			text: 'Patients',
 			Icon: MdiPatient
 		},
 		{
-			href: `${basePath}/repository`,
+			href: '/repository',
 			text: "Study Team Repository",
 			Icon: MdiFolderOutline
 		},
 		{
-			href: `${basePath}/shared_documents`,
+			href: '/shared_documents',
 			text: 'Shared With Sites',
 			Icon: MdiShareVariantOutline
 		},
 		{
-			href: `${basePath}/visits`,
+			href: '/visits',
 			text: 'Visit Calculator',
 			Icon: MdiCalendarMonthOutline
 		},
 		{
-			href: `${basePath}/visits`,
+			href: '/visits',
 			text: 'Safety Letters (SUSARS)',
 			Icon: MdiCalendarMonthOutline
 		},
@@ -80,8 +76,8 @@
 	<!-- Top Navbar -->
 	<nav class="navbar border-b border-base-200 shadow-md">
 		<div class="flex-1 px-4">
-			<a href="{basePath}/" class="flex items-center gap-2">
-				<img src="{basePath}/medcm.png" class="h-8" alt="Logo" />
+			<a href="/" class="flex items-center gap-2">
+				<img src="/medcm.png" class="h-8" alt="Logo" />
 				<span class="text-2xl font-bold">MedCM</span>
 			</a>
 		</div>
