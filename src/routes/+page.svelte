@@ -176,7 +176,7 @@
   </style>
 </svelte:head>
 
-<div class="container mx-auto p-6 max-w-6xl">
+<div class="container mx-auto p-6 max-w-8xl">
   <div class="mb-8">
     <h1 class="text-3xl font-bold mb-2">Study Newsletters</h1>
     <p class="text-base-content/70">Access the latest newsletters and updates for your study</p>
