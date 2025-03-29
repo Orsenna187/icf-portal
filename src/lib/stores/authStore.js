@@ -7,6 +7,7 @@ import {
     signOut,
     getIdToken 
 } from "firebase/auth";
+import { invalidateAll } from '$app/navigation';
 
 export const authStore = writable({
     // We keep client-side user for convenience (e.g., getting token quickly),
@@ -32,14 +33,13 @@ async function setSessionCookie(firebaseUser) {
         });
         if (!response.ok) {
             console.error('Failed to set session cookie:', await response.text());
-            // Optionally sign out the user client-side if server session fails
             await signOut(auth);
         } else {
             console.log('Session cookie set successfully via API.');
+            await invalidateAll(); 
         }
     } catch (error) {
         console.error('Error calling /api/auth/session:', error);
-         // Optionally sign out the user client-side if server session fails
          await signOut(auth);
     }
 }
@@ -88,6 +88,8 @@ export const authHandlers = {
             // Then, clear the server-side session cookie via API
             // Note: onAuthStateChanged will also fire with null user, calling clearSessionCookie again, which is fine.
             await clearSessionCookie(); 
+            // Invalidate all server load functions to re-run them without the cookie
+            await invalidateAll(); 
         } catch (error) {
             console.error("Logout error:", error);
             throw error;

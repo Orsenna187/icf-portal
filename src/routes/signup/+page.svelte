@@ -1,25 +1,21 @@
 <script>
     import Signup from '../../components/Signup.svelte';
-    import { authStore } from '$lib/stores/authStore';
-    import { goto } from '$app/navigation';
+    // import { authStore } from '$lib/stores/authStore'; // No longer needed
+    // import { goto } from '$app/navigation'; // No longer needed
 
-    // If user is already logged in, redirect them away from signup page
-    $: if ($authStore.user && !$authStore.loading) {
-        goto('/'); // Redirect to home page or dashboard
-    }
+    // Server load function in +layout.server.js handles redirecting logged-in users away.
+    export let data; // Get user data from layout load
+
 </script>
 
-{#if $authStore.loading}
-    <div class="min-h-screen flex items-center justify-center">
-		<span class="loading loading-spinner loading-lg"></span> 
-	</div>
-{:else if !$authStore.user}
+{#if !data.user} 
+    <!-- Show Signup only if user data from server is null -->
     <Signup />
      <p class="text-center mt-4">
         Already have an account? 
         <a href="/login" class="link link-primary">Login here</a>
     </p>
 {:else}
-    <!-- This part should ideally not be reached due to the redirect -->
-    <p>You are already logged in.</p>
+    <!-- This part should ideally not be reached due to server-side redirect -->
+    <p class="text-center mt-4">Redirecting...</p> 
 {/if} 
