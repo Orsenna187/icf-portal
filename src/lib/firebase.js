@@ -1,6 +1,7 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getStorage, ref, listAll, getDownloadURL, getMetadata } from 'firebase/storage';
+import { getStorage } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,7 +15,16 @@ const firebaseConfig = {
     })
 };
 
+console.log("Firebase Config Used:", firebaseConfig);
+
 // Initialize Firebase only once
-export const app = initializeApp(firebaseConfig);
+let app;
+if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+} else {
+    app = getApps()[0];
+}
+
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+export const auth = getAuth(app);
