@@ -1,4 +1,4 @@
-import { adminAuth } from '$lib/server/admin';
+import { getAdminAuth } from '$lib/server/admin';
 import { redirect } from '@sveltejs/kit';
 
 // Define routes that don't require authentication
@@ -6,17 +6,20 @@ const publicRoutes = ['/login', '/signup'];
 
 /** @type {import('./$types').LayoutServerLoad} */
 export async function load({ cookies, url }) {
+    console.log('+layout.server.js: Load function started');
     let user = null;
     let error = null;
 
     try {
-        const sessionCookie = cookies.get('__session');
+        const sessionCookie = cookies.get('session'); // Use 'session' as set in the session endpoint
         
         if (sessionCookie) {
-            // Verify the session cookie. Force checkRevoked to true.
+            console.log('+layout.server.js: Verifying session cookie...');
+            const adminAuth = getAdminAuth(); // Get the auth instance
             const decodedClaims = await adminAuth.verifySessionCookie(
                 sessionCookie, true /** checkRevoked */
             );
+            console.log('+layout.server.js: Session cookie verified for UID:', decodedClaims.uid);
             // You can retrieve additional user data from Firebase Auth or your DB here if needed
             // const userData = await adminAuth.getUser(decodedClaims.uid);
             user = {
@@ -27,14 +30,13 @@ export async function load({ cookies, url }) {
                 // name: userData.displayName,
                 // picture: userData.photoURL,
             };
-            console.log('Server load: Valid session cookie found for UID:', user.uid);
         } else {
-            console.log('Server load: No session cookie found.');
+            console.log('+layout.server.js: No session cookie found.');
         }
     } catch (e) {
         // Session cookie is invalid or revoked. Clear it.
-        console.warn('Server load: Error verifying session cookie:', e.code);
-        cookies.delete('__session', { path: '/' });
+        console.error('+layout.server.js: Error verifying session cookie:', e);
+        cookies.delete('session', { path: '/' });
         user = null;
         // Don't throw error here, just return null user unless it's a critical setup issue
     }

@@ -15,7 +15,7 @@ const firebaseConfig = {
     })
 };
 
-console.log("Firebase Config Used:", firebaseConfig);
+// console.log("Firebase Config Used:", firebaseConfig);
 
 // Initialize Firebase only once
 let app;

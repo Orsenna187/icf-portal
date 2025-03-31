@@ -1,36 +1,31 @@
 import { json } from '@sveltejs/kit';
-import { adminAuth } from '$lib/server/admin';
+import { getAdminAuth } from '$lib/server/admin';
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ cookies }) {
-    try {
-        const sessionCookie = cookies.get('__session');
+    console.log('Logout endpoint hit');
+	const sessionCookie = cookies.get('session');
 
-        if (sessionCookie) {
-            // Optionally revoke the session cookie on the server side
-            // This prevents the cookie from being used again even if stolen
-            // Note: This requires verifying the cookie first to get the UID
-            try {
-                const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true /** checkRevoked */);
-                await adminAuth.revokeRefreshTokens(decodedClaims.sub); // sub is the user ID
-                console.log('Successfully revoked tokens for UID:', decodedClaims.sub);
-            } catch (error) {
-                 // Ignore errors if cookie is invalid or expired, just clear it
-                 console.warn('Error verifying or revoking session cookie during logout:', error.code);
-            }
-
-            // Delete the session cookie
-            cookies.delete('__session', { path: '/' });
-            console.log('Session cookie deleted.');
-        } else {
-            console.log('No session cookie found to delete during logout.');
+	if (!sessionCookie) {
+        console.log('Logout: No session cookie found, cannot revoke.');
+		// Can't revoke tokens if no session, but still clear the cookie client-side
+	} else {
+        try {
+            const adminAuth = getAdminAuth();
+            const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true /** checkRevoked */);
+            await adminAuth.revokeRefreshTokens(decodedClaims.sub); // sub is the user ID
+            console.log('Logout: Revoked refresh tokens for UID:', decodedClaims.sub);
+        } catch (error) {
+            // If verifySessionCookie fails (expired, invalid), tokens likely already unusable.
+            // Log the error but proceed to clear the cookie.
+            console.error('Logout: Error verifying session cookie or revoking tokens:', error);
         }
-
-        return json({ status: 'success' });
-
-    } catch (error) {
-        console.error('Error during logout:', error);
-        return json({ error: 'Internal server error during logout.' }, { status: 500 });
     }
+
+    // Always clear the session cookie on logout, regardless of token revocation success
+    cookies.delete('session', { path: '/' }); // Ensure path matches where it was set
+    console.log('Logout: Session cookie cleared.');
+	
+	return json({ status: 'success' });
 }
  
