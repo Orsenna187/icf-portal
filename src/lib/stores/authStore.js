@@ -61,16 +61,6 @@ async function clearSessionCookie() {
 }
 
 export const authHandlers = {
-    signup: async (email, password) => {
-        try {
-            // createUserWithEmailAndPassword automatically signs the user in
-            // The onAuthStateChanged listener below will handle setting the cookie
-            await createUserWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-            console.error("Signup error:", error);
-            throw error; 
-        }
-    },
     login: async (email, password) => {
         try {
             // signInWithEmailAndPassword triggers onAuthStateChanged

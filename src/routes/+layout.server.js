@@ -2,7 +2,7 @@ import { getAdminAuth } from '$lib/server/admin';
 import { redirect } from '@sveltejs/kit';
 
 // Define routes that don't require authentication
-const publicRoutes = ['/login', '/signup']; 
+const publicRoutes = ['/login']; 
 
 /** @type {import('./$types').LayoutServerLoad} */
 export async function load({ cookies, url }) {
