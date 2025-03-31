@@ -18,6 +18,7 @@
 	import MdiCalendarMonthOutline from 'virtual:icons/mdi/calendar-month-outline';
 	import MdiBellAlert from 'virtual:icons/mdi/bell-alert';
 	import MdiLogout from 'virtual:icons/mdi/logout';
+	import MdiShieldAccount from 'virtual:icons/mdi/shield-account';
 
 	const studies = [
 		'demo-study-1',
@@ -175,6 +176,17 @@
 						<span>{text}</span>
 					</a>
 				{/each}
+				
+				{#if user && user.role === 'admin'}
+					<div class="divider my-2"></div> 
+					<a 
+						href="/admin" 
+						class="btn btn-ghost justify-start gap-4 {'/admin' === activeUrl ? 'btn-active' : ''}"
+					>
+						<MdiShieldAccount class="w-6 h-6"/>
+						<span>Admin Panel</span>
+					</a>
+				{/if}
 			</nav>
 		{/if}
 
