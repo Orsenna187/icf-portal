@@ -113,31 +113,6 @@
       return nameMatch && dateMatch;
     });
 
-    // Group newsletters by year and month
-    $: groupedNewsletters = filteredNewsletters.reduce((groups, newsletter) => {
-      const year = newsletter.createdAt.getFullYear();
-      const month = newsletter.createdAt.getMonth();
-      
-      if (!groups[year]) {
-        groups[year] = {};
-      }
-      
-      if (!groups[year][month]) {
-        groups[year][month] = [];
-      }
-      
-      groups[year][month].push(newsletter);
-      return groups;
-    }, {});
-
-    // Get sorted years (newest first)
-    $: years = Object.keys(groupedNewsletters).sort((a, b) => b - a);
-
-    // Get month name
-    function getMonthName(monthIndex) {
-      return new Date(2000, monthIndex, 1).toLocaleString('default', { month: 'long' });
-    }
-
     // Reset filters
     function resetFilters() {
       searchQuery = '';
@@ -184,31 +159,34 @@
   
   <!-- Search and filter section -->
   <div class="bg-base-200 rounded-lg p-4 mb-8">
-    <div class="flex flex-col md:flex-row gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
       <!-- Search input -->
-      <div class="form-control flex-1">
-        <div class="input-group">
+      <div class="form-control md:col-span-5">
+        <label class="label">
+          <span class="label-text">Search</span>
+        </label>
+        <div class="flex">
           <input 
             type="text" 
             placeholder="Search newsletters..." 
-            class="input input-bordered w-full" 
+            class="input input-bordered rounded-r-none flex-grow" 
             bind:value={searchQuery}
           />
-          <button class="btn btn-square">
+          <button class="btn btn-square rounded-l-none border-l-0">
             <MdiMagnify class="h-6 w-6" />
           </button>
         </div>
       </div>
       
       <!-- Date filters -->
-      <div class="flex flex-wrap gap-2">
+      <div class="md:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div class="form-control">
           <label class="label">
             <span class="label-text">From</span>
           </label>
           <input 
             type="date" 
-            class="input input-bordered w-full max-w-xs" 
+            class="input input-bordered w-full" 
             bind:value={startDate}
           />
         </div>
@@ -219,16 +197,16 @@
           </label>
           <input 
             type="date" 
-            class="input input-bordered w-full max-w-xs" 
+            class="input input-bordered w-full" 
             bind:value={endDate}
           />
         </div>
         
         <div class="form-control">
           <label class="label">
-            <span class="label-text">&nbsp;</span>
+            <span class="label-text">Actions</span>
           </label>
-          <button class="btn btn-outline" on:click={resetFilters}>
+          <button class="btn btn-outline w-full" on:click={resetFilters}>
             Reset Filters
           </button>
         </div>
@@ -237,7 +215,7 @@
     
     <!-- Search results count -->
     {#if searchQuery || startDate || endDate}
-      <div class="mt-2 text-sm">
+      <div class="mt-3 text-sm">
         Found {filteredNewsletters.length} newsletter{filteredNewsletters.length !== 1 ? 's' : ''}
       </div>
     {/if}
@@ -256,24 +234,14 @@
       <span>No newsletters found matching your search criteria.</span>
     </div>
   {:else}
-    <!-- Most recent newsletter (featured) -->
-    {#if filteredNewsletters.length > 0 && (!searchQuery && !startDate && !endDate)}
-      <div class="mb-12">
-        <div class="flex items-center gap-2 mb-4">
-          <h2 class="text-2xl font-bold">Latest Newsletter</h2>
-          {#if isRecent(filteredNewsletters[0].createdAt)}
-            <div class="badge badge-primary gap-1">
-              <MdiNewBox class="w-4 h-4" />
-              NEW
-            </div>
-          {/if}
-        </div>
-        
-        <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 border-2 border-primary">
+    <!-- All newsletters in a grid layout -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {#each filteredNewsletters as newsletter, i}
+        <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 {i === 0 && !searchQuery && !startDate && !endDate ? 'border-2 border-primary' : ''}">
           <!-- PDF Preview at the top of the card -->
           <figure class="h-64 relative">
             <iframe 
-              src="{filteredNewsletters[0].url}#toolbar=0&navpanes=0&scrollbar=0&view=FitH,top" 
+              src="{newsletter.url}#toolbar=0&navpanes=0&scrollbar=0&view=FitH,top" 
               width="100%" 
               height="100%" 
               title="PDF Preview" 
@@ -286,81 +254,33 @@
           </figure>
           
           <div class="card-body">
-            <div class="flex items-center gap-3 mb-3">
-              <MdiPdfBox class="w-8 h-8 text-primary" />
-              <h2 class="card-title">{filteredNewsletters[0].name.replace(/\.pdf$/i, '')}</h2>
+            <div class="flex items-center justify-between w-full mb-3">
+              <div class="flex items-center gap-3">
+                <MdiPdfBox class="w-8 h-8 text-primary" />
+                <h2 class="card-title">
+                  {newsletter.name.replace(/\.pdf$/i, '')}
+                  {#if isRecent(newsletter.createdAt)}
+                    <div class="badge badge-primary">NEW</div>
+                  {/if}
+                </h2>
+              </div>
+              <div class="flex items-center gap-1 text-base-content/70">
+                <MdiCalendarMonth class="w-5 h-5" />
+                <span class="text-sm whitespace-nowrap">{formatDate(newsletter.createdAt)}</span>
+              </div>
             </div>
-            
-            <div class="flex items-center gap-2 text-base-content/70 mb-1">
-              <MdiCalendarMonth class="w-5 h-5" />
-              <span class="text-sm">{formatDate(filteredNewsletters[0].createdAt)}</span>
-            </div>
-            
-            <p class="text-sm text-base-content/70 mb-4">Size: {filteredNewsletters[0].size}</p>
             
             <div class="card-actions justify-between mt-auto">
-              <a href={filteredNewsletters[0].url} target="_blank" class="btn btn-primary">
+              <a href={newsletter.url} target="_blank" class="btn btn-primary">
                 <MdiEye class="w-5 h-5 mr-2" />
                 View
               </a>
-              <a href={filteredNewsletters[0].url} download={filteredNewsletters[0].name} class="btn btn-outline">
+              <a href={newsletter.url} download={newsletter.name} class="btn btn-outline">
                 <MdiDownload class="w-5 h-5" />
                 Download
               </a>
             </div>
           </div>
-        </div>
-      </div>
-    {/if}
-    
-    <!-- All newsletters organized by year and month -->
-    <div class="mb-8">
-      {#if !searchQuery && !startDate && !endDate}
-        <h2 class="text-2xl font-bold mb-6">Newsletter Archive</h2>
-      {/if}
-      
-      {#each years as year}
-        <div class="mb-10">
-          <h3 class="text-xl font-bold mb-4 bg-base-200 p-2 rounded">{year}</h3>
-          
-          {#each Object.keys(groupedNewsletters[year]).sort((a, b) => b - a) as month}
-            <div class="mb-6">
-              <h4 class="text-lg font-semibold mb-3 text-primary border-b border-primary pb-1">{getMonthName(month)}</h4>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {#each groupedNewsletters[year][month] as newsletter}
-                  <!-- Skip the first newsletter in the unfiltered view since it's already shown above -->
-                  {#if newsletter !== filteredNewsletters[0] || searchQuery || startDate || endDate}
-                    <div class="card bg-base-100 shadow hover:shadow-md transition-shadow duration-300">
-                      <div class="card-body p-4">
-                        <div class="flex items-center gap-2 mb-2">
-                          <MdiPdfBox class="w-6 h-6 text-primary" />
-                          <h5 class="card-title text-base">{newsletter.name.replace(/\.pdf$/i, '')}</h5>
-                          {#if isRecent(newsletter.createdAt)}
-                            <div class="badge badge-sm badge-primary">New</div>
-                          {/if}
-                        </div>
-                        
-                        <div class="flex items-center gap-1 text-base-content/70 text-sm mb-3">
-                          <MdiCalendarMonth class="w-4 h-4" />
-                          <span>{formatDate(newsletter.createdAt)}</span>
-                        </div>
-                        
-                        <div class="card-actions justify-between mt-2">
-                          <a href={newsletter.url} target="_blank" class="btn btn-sm btn-primary">
-                            View
-                          </a>
-                          <a href={newsletter.url} download={newsletter.name} class="btn btn-sm btn-ghost">
-                            <MdiDownload class="w-4 h-4" />
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  {/if}
-                {/each}
-              </div>
-            </div>
-          {/each}
         </div>
       {/each}
     </div>
