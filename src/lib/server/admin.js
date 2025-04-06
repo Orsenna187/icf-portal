@@ -13,43 +13,39 @@ const initializeAdminApp = () => {
         return admin.auth(); // Return existing auth instance
     }
 
-    // Check if running in Vercel or locally
-    const serviceAccountJson = process.env.FIREBASE_ADMIN_SDK_CONFIG;
-    const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
     let credentials;
-
-    if (serviceAccountJson) {
-        try {
-            credentials = cert(JSON.parse(serviceAccountJson));
-            console.log('Using credentials from FIREBASE_ADMIN_SDK_CONFIG env var.');
-        } catch (e) {
-            console.error('Error parsing FIREBASE_ADMIN_SDK_CONFIG:', e);
-            throw new Error('Failed to initialize Firebase Admin SDK (JSON parse error).');
-        }
-    } else if (credentialsPath) {
-        try {
-            const serviceAccount = JSON.parse(fs.readFileSync(credentialsPath, 'utf8')); // Specify encoding
-            credentials = cert(serviceAccount);
-            console.log(`Using credentials file from GOOGLE_APPLICATION_CREDENTIALS path: ${credentialsPath}`);
-        } catch (e) {
-            console.error(`Error reading/parsing credentials file from ${credentialsPath}:`, e);
-            throw new Error('Failed to initialize Firebase Admin SDK (File read/parse error).');
-        }
-    } else {
-        console.warn('Credentials not found. Set FIREBASE_ADMIN_SDK_CONFIG or GOOGLE_APPLICATION_CREDENTIALS.');
-        throw new Error('Failed to initialize Firebase Admin SDK (Missing credentials).');
-    }
-
-    // Initialize Firebase Admin SDK
+    
     try {
+        // For Vercel: Check if service account is provided as JSON string in environment variable
+        if (process.env.FIREBASE_ADMIN_SDK_CONFIG) {
+            console.log('Using FIREBASE_ADMIN_SDK_CONFIG environment variable');
+            const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_SDK_CONFIG);
+            credentials = cert(serviceAccount);
+        }
+        // For local dev: Try to load from file
+        else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+            const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+            console.log(`Attempting to read credentials from file: ${credentialsPath}`);
+            const serviceAccount = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
+            credentials = cert(serviceAccount);
+        } 
+        // Direct file path fallback
+        else {
+            const credentialsPath = 'C:/Users/AAD947/Desktop/code/svelte/icf-portal/firebase-admin-key.json';
+            console.log(`Fallback: Trying direct file path: ${credentialsPath}`);
+            const serviceAccount = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
+            credentials = cert(serviceAccount);
+        }
+
+        // Initialize Firebase Admin SDK
         initializeApp({
             credential: credentials
         });
         console.log('Firebase Admin SDK initialized successfully.');
         return admin.auth(); // Return the newly initialized auth instance
-    } catch (initError) {
-        console.error('Firebase Admin SDK: Error during initializeApp:', initError);
-        throw new Error('Firebase Admin SDK initialization failed.');
+    } catch (e) {
+        console.error(`Error with Firebase Admin SDK initialization:`, e);
+        throw new Error(`Failed to initialize Firebase Admin SDK: ${e.message}`);
     }
 };
 
