@@ -154,9 +154,9 @@
         .sort(sortPatients);
 </script>
 
-<div class="p-8 relative min-h-screen">
+<div class="container mx-auto p-6 max-w-8xl">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold">Patients</h1>
+        <h1 class="text-3xl font-bold mb-2">Patients</h1>
     </div>
 
     <div class="flex flex-wrap gap-4 mb-4">
